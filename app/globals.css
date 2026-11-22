@@ -39,3 +39,5 @@ select { padding: .55rem .8rem; border: 1px solid #b9c7ae; border-radius: 10px; 
 .tag { font-size: .75rem; padding: .1rem .5rem; border-radius: 999px; background: var(--sage); }
 .tag.high { background: var(--petal); }
 .acts label button { padding: .25rem .7rem; font-size: .85rem; }
+input[type="range"] { width: 100%; padding: 0; border: 0; accent-color: var(--moss); margin: .4rem 0; }
+button:disabled { opacity: .6; cursor: default; }
