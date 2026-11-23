@@ -7,7 +7,7 @@ import { supabase } from '../lib/supabase';
 const ITEMS = [
   ['/dashboard', 'Home', '🏡'], ['/planner', 'Planner', '🗓️'], ['/goals', 'Goals & Habits', '🎯'],
   ['/inspiration', 'Inspiration', '💌'], ['/sounds', 'Sound Space', '🎧'], ['/focus', 'Focus Room', '⏳'],
-  ['/memories', 'Memory Lane', '📷'], ['/vision', 'Vision Board', '🌸'], ['/bucket', 'Bucket List', '🪣'], ['/capsule', 'Time Capsule', '🕰️'], ['/openwhen', 'Open When…', '✉️'], ['/reset', 'Monthly Reset', '🌙'], ['/mood', 'Mood Tracker', '🙂'], ['/journal', 'Journal', '📖'],
+  ['/memories', 'Memory Lane', '📷'], ['/vision', 'Vision Board', '🌸'], ['/bucket', 'Bucket List', '🪣'], ['/capsule', 'Time Capsule', '🕰️'], ['/openwhen', 'Open When…', '✉️'], ['/reset', 'Monthly Reset', '🌙'], ['/recap', 'My Little Recap', '🌱'], ['/mood', 'Mood Tracker', '🙂'], ['/journal', 'Journal', '📖'],
 ];
 
 export default function Nav() {
