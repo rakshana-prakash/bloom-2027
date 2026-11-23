@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../lib/supabase';
 
-const LINKS = [['/dashboard', 'Dashboard'], ['/planner', 'Planner'], ['/goals', 'Goals'], ['/inspiration', 'Inspiration'], ['/sounds', 'Sounds'], ['/focus', 'Focus'], ['/journal', 'Journal']];
+const LINKS = [['/dashboard', 'Dashboard'], ['/planner', 'Planner'], ['/goals', 'Goals'], ['/inspiration', 'Inspiration'], ['/sounds', 'Sounds'], ['/focus', 'Focus'], ['/memories', 'Memories'], ['/vision', 'Vision'], ['/bucket', 'Bucket list'], ['/journal', 'Journal']];
 
 export default function Nav() {
   const router = useRouter();

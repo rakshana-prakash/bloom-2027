@@ -52,3 +52,16 @@ button:disabled { opacity: .6; cursor: default; }
 .overlay { position: fixed; inset: 0; z-index: 30; background: var(--mist); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .8rem; }
 .overlay .timer { font-size: 8rem; }
 @media (max-width: 480px) { .timer { font-size: 3.8rem; } .overlay .timer { font-size: 5rem; } }
+nav { gap: .5rem 1rem; }
+.photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .8rem; }
+.photos figure { margin: 0; }
+.photos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; display: block; }
+.photos figcaption { padding-top: .3rem; font-size: .9rem; }
+.photos figcaption button { padding: .15rem .6rem; font-size: .85rem; margin-top: .3rem; }
+.board { position: relative; width: 100%; aspect-ratio: 4 / 3; min-height: 320px; border-radius: 18px; overflow: hidden; border: 1px solid #cfdcc6; margin-bottom: 1.1rem; }
+.vitem { position: absolute; cursor: grab; touch-action: none; user-select: none; }
+.vitem img { width: 100%; display: block; border-radius: 8px; pointer-events: none; }
+.vtext { font-family: var(--display), serif; background: rgba(255,255,255,.75); padding: .35rem .6rem; border-radius: 8px; }
+.vctl { position: absolute; top: -.5rem; right: -.4rem; display: flex; gap: 2px; opacity: .85; }
+.vctl button { padding: 0; width: 1.4rem; height: 1.4rem; font-size: .75rem; border-radius: 50%; }
+.thumb { width: 2.4rem; height: 2.4rem; object-fit: cover; border-radius: 8px; }
