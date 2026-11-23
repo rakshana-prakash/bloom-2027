@@ -2,7 +2,7 @@ import './globals.css';
 import SoundProvider from '../components/SoundProvider';
 import { Fraunces, DM_Sans } from 'next/font/google';
 
-const display = Fraunces({ subsets: ['latin'], variable: '--display' });
+const display = Fraunces({ subsets: ['latin'], variable: '--display', style: ['normal', 'italic'] });
 const body = DM_Sans({ subsets: ['latin'], variable: '--body' });
 
 export const metadata = {

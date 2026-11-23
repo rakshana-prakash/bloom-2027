@@ -21,6 +21,7 @@ export default function Dashboard() {
   const user = useUser();
   const [logs, setLogs] = useState([]);
   const [mood, setMood] = useState(null);
+  const [burst, setBurst] = useState(0);
   const t = today();
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function Dashboard() {
       setLogs(logs.filter((l) => !(l.day === t && l.activity === activity)));
     } else {
       const { error } = await supabase.from('activity_log').insert({ day: t, activity });
-      if (!error) setLogs([...logs, { day: t, activity }]);
+      if (!error) { setLogs([...logs, { day: t, activity }]); if (doneToday.size + 1 === ACTIVITIES.length) setBurst((b) => b + 1); }
     }
   }
   async function pickMood(m) {
@@ -65,14 +66,21 @@ export default function Dashboard() {
       </section>
 
       <div className="stats">
-        <div className="stat"><b>🔥 {streak}</b><small>day streak</small></div>
+        <div className="stat"><b><span className="flame">🔥</span> {streak}</b><small>day streak</small></div>
         <div className="stat"><b>{doneToday.size}/{ACTIVITIES.length}</b><small>done today</small></div>
         <div className="stat"><b>{moodIcon || '—'}</b><small>{mood || 'mood not set'}</small></div>
       </div>
 
       <section className="card">
         <h2>Little by Little</h2>
-        <div className="bar" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><i style={{ width: pct + '%' }} /></div>
+        <div className="ringwrap" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+          <svg className="ring" viewBox="0 0 120 120" aria-hidden>
+            <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#7fb08c" /><stop offset="1" stopColor="#b9a7ee" /></linearGradient></defs>
+            <circle className="trk" cx="60" cy="60" r="52" />
+            <circle className="val" cx="60" cy="60" r="52" stroke="url(#rg)" style={{ strokeDashoffset: 327 - (327 * pct) / 100 }} />
+          </svg>
+          <div><b>{pct}%</b><small>of today’s little things</small></div>
+        </div>
         <ul className="acts">
           {ACTIVITIES.map((a) => (
             <li key={a}><label><input type="checkbox" checked={doneToday.has(a)} onChange={() => toggle(a)} />{a}</label></li>
@@ -88,6 +96,13 @@ export default function Dashboard() {
           ))}
         </div>
       </section>
+      {burst > 0 && (
+        <div key={burst} className="confetti" aria-hidden>
+          {Array.from({ length: 26 }, (_, i) => (
+            <i key={i} style={{ '--x': Math.random() * 100 - 50 + 'vw', '--y': -(Math.random() * 55 + 15) + 'vh', '--r': Math.random() * 720 + 'deg', '--d': Math.random() * 0.3 + 's', background: ['#7fb08c', '#f2a7b8', '#b9a7ee', '#f7c98b'][i % 4] }} />
+          ))}
+        </div>
+      )}
     </main>
   );
 }
