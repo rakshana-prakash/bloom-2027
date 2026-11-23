@@ -1,4 +1,5 @@
 import './globals.css';
+import SoundProvider from '../components/SoundProvider';
 import { Fraunces, DM_Sans } from 'next/font/google';
 
 const display = Fraunces({ subsets: ['latin'], variable: '--display' });
@@ -12,7 +13,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${display.variable} ${body.variable}`}>{children}</body>
+      <body className={`${display.variable} ${body.variable}`}><SoundProvider>{children}</SoundProvider></body>
     </html>
   );
 }
