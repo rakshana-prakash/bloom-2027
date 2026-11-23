@@ -120,3 +120,9 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--rose); outline-
 label { display: block; }
 .acts li a { display: block; padding: .6rem .8rem; border-radius: 14px; background: var(--mist); text-decoration: none; }
 .acts li a:hover { background: var(--sage); }
+.cell small { display: block; font-size: .72rem; line-height: 1.2; }
+.cell .em { display: block; font-size: 1.15rem; line-height: 1.1; min-height: 1.15rem; }
+.wk { display: flex; gap: 6px; align-items: flex-end; height: 110px; }
+.wk div { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; }
+.wk i { display: block; width: 100%; background: var(--sage); border-radius: 8px 8px 0 0; min-height: 3px; }
+.wk small { color: #5d6b60; margin-top: 4px; }

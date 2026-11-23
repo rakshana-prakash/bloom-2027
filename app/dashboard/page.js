@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useUser, today } from '../../lib/useUser';
 import Nav from '../../components/Nav';
+import { MOODS } from '../../lib/moods';
 
 const ACTIVITIES = ['One-minute breathing', 'Drink a glass of water', 'Read one page', 'Write three things you are grateful for', 'Listen to a favourite song', 'Take a short outdoor break', 'Gentle stretching', 'Learn one new word'];
-const MOODS = [['😊', 'Happy'], ['😌', 'Calm'], ['😐', 'Okay'], ['😔', 'Low'], ['😣', 'Stressed']];
 const QUOTES = ['Small steps still move you forward.', 'You do not have to be perfect to bloom.', 'Make little moments count.', 'Rest is part of the plan.', 'Progress, not pressure.'];
 
 function calcStreak(days) {
