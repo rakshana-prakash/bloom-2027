@@ -1,7 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { supabase } from '../../lib/supabase';
 import { useUser, today } from '../../lib/useUser';
 import Nav from '../../components/Nav';
@@ -21,7 +19,6 @@ function calcStreak(days) {
 
 export default function Dashboard() {
   const user = useUser();
-  const router = useRouter();
   const [logs, setLogs] = useState([]);
   const [mood, setMood] = useState(null);
   const t = today();
@@ -37,6 +34,8 @@ export default function Dashboard() {
 
   const doneToday = new Set(logs.filter((l) => l.day === t).map((l) => l.activity));
   const streak = calcStreak(logs.map((l) => l.day));
+  const pct = Math.round((doneToday.size / ACTIVITIES.length) * 100);
+  const moodIcon = MOODS.find((m) => m[1] === mood)?.[0];
 
   async function toggle(activity) {
     if (doneToday.has(activity)) {
@@ -47,13 +46,10 @@ export default function Dashboard() {
       if (!error) setLogs([...logs, { day: t, activity }]);
     }
   }
-
   async function pickMood(m) {
     setMood(m);
     await supabase.from('moods').upsert({ day: t, mood: m }, { onConflict: 'user_id,day' });
   }
-
-  async function logout() { await supabase.auth.signOut(); router.replace('/'); }
 
   const hour = new Date().getHours();
   const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
@@ -62,22 +58,24 @@ export default function Dashboard() {
   return (
     <main className="wrap">
       <Nav />
-
       <section className="card hero">
+        <p className="eyebrow">{new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
         <h1>{greet}</h1>
-        <p style={{ margin: 0 }}>{new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
-        <p><em>{quote}</em></p>
+        <p style={{ margin: 0 }}><em>“{quote}”</em></p>
       </section>
+
+      <div className="stats">
+        <div className="stat"><b>🔥 {streak}</b><small>day streak</small></div>
+        <div className="stat"><b>{doneToday.size}/{ACTIVITIES.length}</b><small>done today</small></div>
+        <div className="stat"><b>{moodIcon || '—'}</b><small>{mood || 'mood not set'}</small></div>
+      </div>
 
       <section className="card">
         <h2>Little by Little</h2>
-        <div className="streak">{streak} day streak</div>
-        <p className="muted">{doneToday.size} of {ACTIVITIES.length} done today. One activity keeps your streak going.</p>
+        <div className="bar" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><i style={{ width: pct + '%' }} /></div>
         <ul className="acts">
           {ACTIVITIES.map((a) => (
-            <li key={a}>
-              <label><input type="checkbox" checked={doneToday.has(a)} onChange={() => toggle(a)} />{a}</label>
-            </li>
+            <li key={a}><label><input type="checkbox" checked={doneToday.has(a)} onChange={() => toggle(a)} />{a}</label></li>
           ))}
         </ul>
       </section>
