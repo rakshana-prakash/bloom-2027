@@ -1,6 +1,7 @@
 'use client';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { supabase } from '../lib/supabase';
 
 export const SOUNDS = [
   { id: 'rain', label: 'Rain', icon: '🌧️' }, { id: 'thunder', label: 'Thunder', icon: '⛈️' },
@@ -183,16 +184,79 @@ export default function SoundProvider({ children }) {
     return () => clearInterval(id);
   }, [sleepAt]);
 
+
+  // ---- music player (user's own songs) ----
+  const au = useRef(null);
+  const [queue, setQueue] = useState([]);
+  const [idx, setIdx] = useState(-1);
+  const [playing, setPlaying] = useState(false);
+  const [shuffle, setShuffle] = useState(false);
+  const [repeat, setRepeat] = useState('off');
+  const [time, setTime] = useState(0);
+  const [dur, setDur] = useState(0);
+  const [mvol, setMvolState] = useState(0.9);
+  const st = useRef({}); st.current = { queue, idx, shuffle, repeat };
+
+  useEffect(() => {
+    const a = new Audio(); a.preload = 'auto'; a.volume = 0.9; au.current = a;
+    a.ontimeupdate = () => setTime(a.currentTime);
+    a.onloadedmetadata = () => setDur(a.duration || 0);
+    a.onplay = () => setPlaying(true);
+    a.onpause = () => setPlaying(false);
+    a.onended = () => advance(1, true);
+    return () => { a.pause(); a.removeAttribute('src'); };
+  }, []);
+
+  async function loadSong(list, i) {
+    const song = list[i]; if (!song) return;
+    setQueue(list); setIdx(i);
+    const { data } = await supabase.storage.from('music').createSignedUrl(song.path, 3600);
+    if (!data) return;
+    const a = au.current; a.src = data.signedUrl;
+    try { await a.play(); } catch {}
+    supabase.from('songs').update({ last_played: new Date().toISOString() }).eq('id', song.id).then(() => {});
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({ title: song.title, artist: song.artist || 'Bloom 2027' });
+      navigator.mediaSession.setActionHandler('nexttrack', () => advance(1));
+      navigator.mediaSession.setActionHandler('previoustrack', () => advance(-1));
+    }
+  }
+  function advance(dir, auto) {
+    const { queue: q, idx: i, shuffle: sh, repeat: rp } = st.current;
+    if (!q.length) return;
+    if (auto && rp === 'one') { au.current.currentTime = 0; au.current.play(); return; }
+    let n = i + dir;
+    if (sh && q.length > 1) { do { n = Math.floor(Math.random() * q.length); } while (n === i); }
+    if (n >= q.length) { if (rp === 'all' || !auto) n = 0; else { setPlaying(false); return; } }
+    if (n < 0) n = q.length - 1;
+    loadSong(q, n);
+  }
+  const toggleMusic = () => { const a = au.current; if (a && a.src) (a.paused ? a.play() : a.pause()); };
+  const seek = (t) => { if (au.current) au.current.currentTime = t; };
+  const setMvol = (v) => { setMvolState(v); if (au.current) au.current.volume = v; };
+  const stopMusic = () => { au.current?.pause(); au.current?.removeAttribute('src'); setQueue([]); setIdx(-1); setTime(0); setDur(0); };
+  const current = queue[idx] || null;
+  const music = { current, playing, shuffle, repeat, time, dur, mvol, play: loadSong, next: () => advance(1), prev: () => (time > 3 ? seek(0) : advance(-1)), toggle: toggleMusic, seek, setShuffle, setRepeat, setMvol, stop: stopMusic };
+
   const active = SOUNDS.filter((s) => levels[s.id] > 0);
   return (
-    <Ctx.Provider value={{ levels, setLevel, setMix, stopAll, beep, sleepLeft, startSleep }}>
+    <Ctx.Provider value={{ levels, setLevel, setMix, stopAll, beep, sleepLeft, startSleep, music }}>
       {children}
-      {active.length > 0 && (
+      {(active.length > 0 || current) && (
         <div className="mini" role="region" aria-label="Sound player">
-          <span>♪ {active.map((s) => s.label).join(', ')}</span>
-          {sleepLeft > 0 && <span className="muted" style={{ color: '#cfd8cc' }}>sleeps in {Math.ceil(sleepLeft / 60)} min</span>}
-          <Link href="/sounds">Mixer</Link>
-          <button className="ghost" style={{ color: '#fff', borderColor: '#fff' }} onClick={stopAll}>Stop all</button>
+          {current && (
+            <>
+              <span className={'eq' + (playing ? ' on' : '')} aria-hidden><i /><i /><i /></span>
+              <strong className="minititle">{current.title}</strong>
+              <button className="ghost" onClick={() => advance(-1)} aria-label="Previous">⏮</button>
+              <button onClick={toggleMusic} aria-label={playing ? 'Pause' : 'Play'}>{playing ? '⏸' : '▶'}</button>
+              <button className="ghost" onClick={() => advance(1)} aria-label="Next">⏭</button>
+            </>
+          )}
+          {active.length > 0 && <span>🌿 {active.map((x) => x.label).join(', ')}</span>}
+          {sleepLeft > 0 && <span style={{ color: '#cfd8cc' }}>sleeps in {Math.ceil(sleepLeft / 60)} min</span>}
+          <Link href="/sounds">Open</Link>
+          <button className="ghost" style={{ color: '#fff', borderColor: '#fff' }} onClick={() => { stopAll(); stopMusic(); }}>Stop all</button>
         </div>
       )}
     </Ctx.Provider>
