@@ -116,3 +116,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--rose); outline-
 .thumb { width: 2.4rem; height: 2.4rem; object-fit: cover; border-radius: 8px; }
 .streak { font-family: var(--display), serif; font-size: 2.6rem; color: var(--moss); }
 @media (max-width: 480px) { .timer { font-size: 3.8rem; } .overlay .timer { font-size: 5rem; } .card { padding: 1.1rem; } }
+.stats.wide { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+label { display: block; }
+.acts li a { display: block; padding: .6rem .8rem; border-radius: 14px; background: var(--mist); text-decoration: none; }
+.acts li a:hover { background: var(--sage); }
