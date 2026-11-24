@@ -48,7 +48,7 @@ function buildCard(kind, d, o) {
   if (o.activities) stats.push([String(d.acts.length), 'activities']);
   if (kind !== 'daily') stats.push([days.size + (kind === 'weekly' ? '/7' : ''), 'active days']);
   if (o.streak) stats.push([streak + ' 🔥', 'day streak']);
-  if (o.tasks) { stats.push([String(d.tasksDone), 'tasks done']); if (kind !== 'daily') stats.push([String(d.focus), 'focus min']); }
+  if (o.tasks) stats.push([String(d.tasksDone), 'tasks done']);
   const now = new Date();
   const sub = kind === 'daily' ? now.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
     : kind === 'weekly' ? new Date(d.from + 'T00:00').toLocaleDateString(undefined, { day: 'numeric', month: 'short' }) + ' – ' + now.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })

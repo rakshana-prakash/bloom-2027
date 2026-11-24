@@ -4,11 +4,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { supabase } from '../lib/supabase';
 
-const ITEMS = [
-  ['/dashboard', 'Home', '🏡'], ['/planner', 'Planner', '🗓️'], ['/goals', 'Goals & Habits', '🎯'],
-  ['/inspiration', 'Inspiration', '💌'], ['/sounds', 'Sound Space', '🎧'], ['/focus', 'Focus Room', '⏳'],
-  ['/memories', 'Memory Lane', '📷'], ['/vision', 'Vision Board', '🌸'], ['/bucket', 'Bucket List', '🪣'], ['/capsule', 'Time Capsule', '🕰️'], ['/openwhen', 'Open When…', '✉️'], ['/reset', 'Monthly Reset', '🌙'], ['/recap', 'My Little Recap', '🌱'], ['/mood', 'Mood Tracker', '🙂'], ['/journal', 'Journal', '📖'],
-];
+const MAIN = [['/dashboard', 'Home', '🏡'], ['/mood', 'Mood', '🙂'], ['/journal', 'Journal', '📖'], ['/sounds', 'Sounds', '🎧'], ['/memories', 'Memories', '📷']];
+const MORE = [['/planner', 'Planner', '🗓️'], ['/inspiration', 'Inspiration', '💌'], ['/vision', 'Vision board', '🌸'], ['/capsule', 'Time capsule', '🕰️'], ['/openwhen', 'Open when…', '✉️'], ['/recap', 'My Little Recap', '🌱']];
 
 export default function Nav() {
   const router = useRouter();
@@ -17,22 +14,20 @@ export default function Nav() {
   async function logout() { await supabase.auth.signOut(); router.replace('/'); }
   return (
     <>
-      <header className="topbar">
-        <Link href="/dashboard" className="brand">Bloom 2027</Link>
-        <button className="ghost" aria-expanded={open} aria-controls="sidenav" onClick={() => setOpen(!open)}>{open ? 'Close' : '☰ Menu'}</button>
-      </header>
-      <nav id="sidenav" className={'side' + (open ? ' open' : '')} aria-label="Main">
-        <Link href="/dashboard" className="brand">Bloom <span>2027</span></Link>
-        <ul>
-          {ITEMS.map(([href, label, icon]) => (
-            <li key={href}>
-              <Link href={href} className="link" aria-current={path === href ? 'page' : undefined} onClick={() => setOpen(false)}>
-                <span aria-hidden>{icon}</span>{label}
-              </Link>
-            </li>
+      {open && <div className="sheet-bg" onClick={() => setOpen(false)} />}
+      {open && (
+        <div className="sheet">
+          {MORE.map(([h, l, i]) => (
+            <Link key={h} href={h} className="tile-s" aria-current={path === h ? 'page' : undefined} onClick={() => setOpen(false)}><span aria-hidden>{i}</span>{l}</Link>
           ))}
-        </ul>
-        <button className="ghost logout" onClick={logout}>Log out</button>
+          <button className="ghost" onClick={logout}>Log out</button>
+        </div>
+      )}
+      <nav className="dock" aria-label="Main">
+        {MAIN.map(([h, l, i]) => (
+          <Link key={h} href={h} className="dk" aria-current={path === h ? 'page' : undefined}><span aria-hidden>{i}</span><em>{l}</em></Link>
+        ))}
+        <button className={'dk' + (open || MORE.some(([h]) => h === path) ? ' on' : '')} aria-expanded={open} onClick={() => setOpen(!open)}><span aria-hidden>✨</span><em>More</em></button>
       </nav>
     </>
   );
