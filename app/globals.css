@@ -298,3 +298,6 @@ label { display: block; }
 @keyframes wordin { from { opacity: 0; transform: translateY(60%) rotate(4deg); filter: blur(10px); } to { opacity: 1; transform: none; filter: blur(0); } }
 @keyframes sunfloat { to { transform: translate(-16px, 22px) scale(1.08); } }
 @keyframes drift { to { transform: translateX(calc(100vw + 500px)); } }
+.sharebox { margin-top: .9rem; padding: 1rem; border-radius: 22px; background: rgba(255,255,255,.7); border: 1px solid var(--line); animation: rise .35s both; white-space: normal; }
+.linkbox { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin-top: .7rem; }
+.linkbox input { flex: 1; min-width: 12rem; margin: 0; font-size: .85rem; }
